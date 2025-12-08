@@ -1,0 +1,31 @@
+# ===== Build files =====
+*.o
+*.out
+*.exe
+*.a
+*.so
+build/
+bin/
+
+# ===== Debug files =====
+*.log
+core
+vgcore.*
+
+# ===== OS files =====
+.DS_Store
+Thumbs.db
+
+# ===== Editor / IDE =====
+.vscode/
+.idea/
+*.swp
+
+# ===== CMake =====
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# ===== Temporary =====
+tmp/
