@@ -1,7 +1,9 @@
 #include "server.h"
+#include "parser.h"
 #include <iostream>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <cstring>
 
 using namespace std;
 
@@ -50,7 +52,30 @@ void Server::start(){
 
     cout<<"Client connected"<<endl;
 
+    char buffer[1024]; 
+
     while(true){
-        sleep(1);
+        memset(buffer,0,sizeof(buffer)); //clear buffer to remove grabage data if any
+
+        int bytes_read = read(client_fd, buffer, sizeof(buffer));
+
+        if(bytes_read<0){
+            perror("Error reading the input");
+            break;
+        }
+
+        if(bytes_read == 0){
+            cout<<"Client Disconnected"<<endl;
+            break;
+        }
+
+        string input(buffer, bytes_read);
+
+        Command cmd = Parser::parse(input);
+
+        cout<<"Command: "<<cmd.name<<endl;
+        for(int i=0;i<cmd.args.size();i++){
+            cout<<"Arg"<<i+1<<": "<<cmd.args[i]<<endl;
+        }
     }
 }
