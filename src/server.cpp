@@ -73,9 +73,52 @@ void Server::start(){
 
         Command cmd = Parser::parse(input);
 
-        cout<<"Command: "<<cmd.name<<endl;
         for(int i=0;i<cmd.args.size();i++){
-            cout<<"Arg"<<i+1<<": "<<cmd.args[i]<<endl;
+            if(cmd.name == "SET"){
+                if(cmd.args.size()<2){
+                    cout<<"(error) wrong number of arguments for SET"<<endl;
+                }
+                else{
+                    db.set(cmd.args[0],cmd.args[1]);
+                    cout<<"OK"<<endl;
+                }
+            }
+            else if(cmd.name=="GET"){
+                if(cmd.args.size()<1){
+                    cout<<"(error) wring number of arguments for GET"<<endl;
+                }
+                else{
+                    auto val = db.get(cmd.args[0]);
+                    if(val.has_value()) cout<<val.value()<<endl;
+                    else cout<<"(nil)"<<endl;
+                }
+            }
+            else if(cmd.name == "DEL"){
+                if(cmd.args.size()<1){
+                    cout<<"(error) wrong number of arguments for DEL"<<endl;
+                }
+                else{
+                    bool removed = db.del(cmd.args[0]);
+                    cout<<(removed ? 1 : 0)<<endl;
+                }
+            }
+            else if(cmd.name == "INCR"){
+                if(cmd.args.size()<1){
+                    cout<<"(error) wring number of arguments for INCR"<<endl;
+                }
+                else{
+                    auto num = db.incr(cmd.args[0]);
+                    if(num.has_value()) cout<<num.value()<<endl;
+                    else cout<<"(error) value is not an integer"<<endl;
+                }
+            }
+            else if(cmd.name=="EXIT"){
+                cout<<"Client requested EXIT. Closing connection."<<endl;
+                break;
+            }
+            else{
+                cout<<"(error) unkonwn command "<<cmd.name<<endl; 
+            }
         }
     }
 }
