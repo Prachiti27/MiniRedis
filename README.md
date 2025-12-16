@@ -24,7 +24,7 @@ The goal is to build intuition and confidence in **low-level backend systems**.
 ## Features (Work in Progress)
 
 * Single client support
-* String-based key–value storage
+* key–value storage
 * Supported commands:
 
   * `SET key value`

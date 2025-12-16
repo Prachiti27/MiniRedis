@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <optional>
+#include "value.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ class Database{
         optional<long long> incr(const string& key);
 
     private:
-        unordered_map<string,string> store;
+        unordered_map<string,RedisValue> store;
 };
 
 #endif

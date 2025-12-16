@@ -112,8 +112,9 @@ void Server::start(){
                     else cout<<"(error) value is not an integer"<<endl;
                 }
             }
-            else if(cmd.name=="EXIT"){
+            else if(cmd.name=="EXIT\r\n"){
                 cout<<"Client requested EXIT. Closing connection."<<endl;
+                close(client_fd);
                 break;
             }
             else{
