@@ -15,9 +15,12 @@ enum class ValueType{
 
 struct RedisValue{
     ValueType type;
+
     string string_val;
     vector<string> list_val;
     unordered_set<string> set_val;
+
+    long long expire_at = -1;
 };
 
 #endif

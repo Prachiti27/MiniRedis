@@ -20,8 +20,15 @@ class Database{
         optional<string> rpop(const string& key);
         optional<size_t> llen(const string& key);
 
-        //
+        //SET operations
+        bool sadd(const string& key,const string& member);
+        bool srem(const string& key,const string& member);
+        optional<unordered_set<string>> smembers(const string& key);
 
+        //TTL operations
+        bool expire(const string& key,int seconds);
+        optional<long long> ttl(const string& key);
+        
     private:
         unordered_map<string,RedisValue> store;
 };

@@ -91,6 +91,13 @@ void Server::start()
             else
             {
                 db.set(cmd.args[0], cmd.args[1]);
+
+                if (cmd.args.size() == 4 && cmd.args[2] == "EX")
+                {
+                    int seconds = stoi(cmd.args[3]);
+                    db.expire(cmd.args[0], seconds);
+                }
+
                 cout << "OK" << endl;
             }
         }
@@ -201,6 +208,100 @@ void Server::start()
             cout << "Client requested EXIT. Closing connection." << endl;
             close(client_fd);
             break;
+        }
+        else if (cmd.name == "SADD")
+        {
+            if (cmd.args.size() < 2)
+            {
+                cout << "(error) wrong number of arguments for SADD" << endl;
+            }
+            else
+            {
+                try
+                {
+                    bool added = db.sadd(cmd.args[0], cmd.args[1]);
+                    cout << (added ? 1 : 0) << endl;
+                }
+                catch (...)
+                {
+                    cout << "(error) WRONGTYPE Operation against a key holding the wrong kind of value" << endl;
+                }
+            }
+        }
+        else if (cmd.name == "SREM")
+        {
+            if (cmd.args.size() < 2)
+            {
+                cout << "(error) wrong number of arguments for SREM" << endl;
+            }
+            else
+            {
+                try
+                {
+                    bool removed = db.srem(cmd.args[0], cmd.args[1]);
+                    cout << (removed ? 1 : 0) << endl;
+                }
+                catch (...)
+                {
+                    cout << "(error) WRONGTYPE Operation against a key holding the wrong kind of value" << endl;
+                }
+            }
+        }
+        else if (cmd.name == "SMEMBERS")
+        {
+            if (cmd.args.size() < 1)
+            {
+                cout << "(error) wrong number of arguments for SMEMBERS" << endl;
+            }
+            else
+            {
+                try
+                {
+                    auto members = db.smembers(cmd.args[0]);
+                    if (!members.has_value())
+                    {
+                        cout << "(nil)" << endl;
+                    }
+                    else
+                    {
+                        for (const auto &m : members.value())
+                        {
+                            cout << m << endl;
+                        }
+                    }
+                }
+                catch (...)
+                {
+                    cout << "(error) WRONGTYPE Operation against a key holding the wrong kind of value" << endl;
+                }
+            }
+        }
+        else if (cmd.name == "EXPIRE")
+        {
+            if (cmd.args.size() < 2)
+            {
+                cout << "(error) wrong number of arguments for EXPIRE" << endl;
+            }
+            else
+            {
+                bool ok = db.expire(cmd.args[0], stoi(cmd.args[1]));
+                cout << (ok ? 1 : 0) << endl;
+            }
+        }
+        else if (cmd.name == "TTL")
+        {
+            if (cmd.args.size() < 1)
+            {
+                cout << "(error) wrong number of arguments for TTL" << endl;
+            }
+            else
+            {
+                auto t = db.ttl(cmd.args[0]);
+                if (!t.has_value())
+                    cout << -2 << endl; 
+                else
+                    cout << t.value() << endl;
+            }
         }
         else
         {
