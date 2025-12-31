@@ -15,6 +15,13 @@ class Database{
         bool del(const string& key);
         optional<long long> incr(const string& key);
 
+        //LIST operations
+        void lpush(const string& key,const string& value);
+        optional<string> rpop(const string& key);
+        optional<size_t> llen(const string& key);
+
+        //
+
     private:
         unordered_map<string,RedisValue> store;
 };

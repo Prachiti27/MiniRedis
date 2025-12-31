@@ -47,3 +47,50 @@ optional<long long> Database::incr(const string& key){
     store[key] = rv;
     return num;
 }
+
+void Database::lpush(const string& key,const string& value){
+    if (store.find(key) == store.end()) {
+        RedisValue rv;
+        rv.type = ValueType::LIST;
+        rv.list_val.push_back(value);
+        store[key] = rv;
+        return;
+    }
+
+    RedisValue& rv = store[key];
+
+    if (rv.type != ValueType::LIST) {
+        throw runtime_error("WRONGTYPE");
+    }
+
+    rv.list_val.insert(rv.list_val.begin(), value);
+}
+
+optional<string> Database::rpop(const string& key){
+    if(store.find(key) == store.end()) return nullopt;
+
+    RedisValue& rv = store[key];
+
+    if(rv.type != ValueType::LIST) throw runtime_error("WRONGTYPE");
+
+    if(rv.list_val.empty()) return nullopt;
+
+    string val = rv.list_val.back();
+    rv.list_val.pop_back();
+
+    if(rv.list_val.empty()) store.erase(key);
+
+    return val;
+}
+
+optional<size_t> Database::llen(const string& key) {
+    if (store.find(key) == store.end())
+        return 0;
+
+    RedisValue& rv = store[key];
+
+    if (rv.type != ValueType::LIST)
+        throw runtime_error("WRONGTYPE");
+
+    return rv.list_val.size();
+}
